@@ -9,6 +9,7 @@ import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Qualifier;
 import org.springframework.stereotype.Service;
+import org.springframework.transaction.annotation.Isolation;
 import org.springframework.transaction.annotation.Propagation;
 import org.springframework.transaction.annotation.Transactional;
 
@@ -56,7 +57,9 @@ class VulnerableAccountService implements AccountService {
     }
 
     @Override
-    @Transactional(propagation = Propagation.REQUIRES_NEW)
+    @Transactional(propagation = Propagation.REQUIRES_NEW, isolation = Isolation.SERIALIZABLE)
+    // Please note that there are some limitations to the SERIALIZABLE isolation level in H2. However, that should
+    // not change anything in this case.
     public void withdraw(Account account, Money amount) throws InsufficientFundsException {
         if (amount.isNegative()) {
             throw new IllegalArgumentException("Cannot withdraw a negative amount");
