@@ -58,8 +58,10 @@ class VulnerableAccountService implements AccountService {
 
     @Override
     @Transactional(propagation = Propagation.REQUIRES_NEW, isolation = Isolation.SERIALIZABLE)
-    // Please note that there are some limitations to the SERIALIZABLE isolation level in H2. However, that should
-    // not change anything in this case.
+    // Please note that there are some limitations to the SERIALIZABLE isolation level in H2 which means that
+    // it is not enough to protect against a TOCTOU issue. If we were to use MariaDB with this isolation level,
+    // we would get the correct behavior and no TOCTOU issue would arise. In other words: make sure you understand
+    // how your RDBMS implements isolation levels before deciding which one to use!
     public void withdraw(Account account, Money amount) throws InsufficientFundsException {
         if (amount.isNegative()) {
             throw new IllegalArgumentException("Cannot withdraw a negative amount");
