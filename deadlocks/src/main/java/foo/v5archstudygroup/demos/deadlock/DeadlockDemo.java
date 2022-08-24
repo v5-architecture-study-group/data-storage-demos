@@ -48,19 +48,39 @@ public class DeadlockDemo {
     }
 
     private static void update_deadlock(Connection connection1, Connection connection2) throws Exception {
-        execute(connection1, "select id from authors where id = 1 for update");
-        execute(connection2, "select id from authors where id = 2 for update");
+        var t1 = new Thread(() -> {
+            execute(connection1, "select id from authors where id = 1 for update");
+            execute(connection1, "select id from authors where id = 2 for update");
+            commit(connection1);
+        });
+        var t2 = new Thread(() -> {
+            execute(connection2, "select id from authors where id = 2 for update");
+            execute(connection2, "select id from authors where id = 1 for update");
+            commit(connection2);
+        });
 
-        execute(connection1, "select id from authors where id = 2 for update");
-        execute(connection2, "select id from authors where id = 1 for update");
+        t1.start();
+        t2.start();
 
-        connection1.commit();
-        connection2.commit();
+        t1.join();
+        t2.join();
     }
 
-    private static void execute(Connection connection, String sql) throws SQLException {
+    private static void execute(Connection connection, String sql) {
         try (var stmt = connection.createStatement()) {
+            System.out.println("Executing in [" + connection + "][" + Thread.currentThread().getName() + "]: " + sql);
             stmt.execute(sql);
+        } catch (SQLException ex) {
+            throw new RuntimeException(ex);
+        }
+    }
+
+    private static void commit(Connection connection) {
+        try {
+            System.out.println("Committing [" + connection + "]");
+            connection.commit();
+        } catch (SQLException ex) {
+            throw new RuntimeException(ex);
         }
     }
 }
