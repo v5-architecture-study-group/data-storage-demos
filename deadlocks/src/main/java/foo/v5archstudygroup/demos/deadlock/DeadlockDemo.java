@@ -68,8 +68,9 @@ public class DeadlockDemo {
 
     private static void execute(Connection connection, String sql) {
         try (var stmt = connection.createStatement()) {
-            System.out.println("Executing in [" + connection + "][" + Thread.currentThread().getName() + "]: " + sql);
+            System.out.println(Thread.currentThread().getName() + ": BEFORE Executing: " + sql);
             stmt.execute(sql);
+            System.out.println(Thread.currentThread().getName() + ": AFTER  Executing: " + sql);
         } catch (SQLException ex) {
             throw new RuntimeException(ex);
         }
@@ -77,8 +78,9 @@ public class DeadlockDemo {
 
     private static void commit(Connection connection) {
         try {
-            System.out.println("Committing [" + connection + "]");
+            System.out.println(Thread.currentThread().getName() + ": Committing");
             connection.commit();
+            System.out.println(Thread.currentThread().getName() + ": Committed");
         } catch (SQLException ex) {
             throw new RuntimeException(ex);
         }
