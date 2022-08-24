@@ -54,8 +54,13 @@ public abstract class BaseTest {
 
     protected void runInTransaction(Runnable job) {
         log.info("Transaction begins");
-        transactionTemplate.executeWithoutResult(tx -> job.run());
-        log.info("Transaction committed");
+        try {
+            transactionTemplate.executeWithoutResult(tx -> job.run());
+            log.info("Transaction committed");
+        } catch (RuntimeException ex) {
+            log.error("Error in transaction", ex);
+            throw ex;
+        }
     }
 
     protected void allowReading() {

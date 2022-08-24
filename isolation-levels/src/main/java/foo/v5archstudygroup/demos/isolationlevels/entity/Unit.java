@@ -70,4 +70,15 @@ public class Unit extends AbstractPersistable<Long> {
     public Optional<Instant> getStatusLastUpdated() {
         return Optional.ofNullable(statusLastUpdated);
     }
+
+    @Override
+    public String toString() {
+        return "Unit{" +
+                "callSign='" + callSign + '\'' +
+                ", location=" + location +
+                ", status=" + status +
+                ", locationLastUpdated=" + locationLastUpdated +
+                ", statusLastUpdated=" + statusLastUpdated +
+                '}';
+    }
 }

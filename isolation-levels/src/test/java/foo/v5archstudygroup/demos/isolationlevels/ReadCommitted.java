@@ -64,7 +64,7 @@ public class ReadCommitted extends BaseTest {
     }
 
     @Test
-    public void the_same_query_inside_the_same_transaction_returns_different_results_if_another_transaction_commits_changes_in_between() {
+    public void the_same_query_inside_the_same_transaction_returns_different_results_if_another_transaction_commits_updates_in_between() {
         var writeThread = CompletableFuture.runAsync(() -> {
             runInTransaction(() -> {
                 awaitWritePermission();
