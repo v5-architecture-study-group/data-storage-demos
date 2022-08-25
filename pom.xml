@@ -19,6 +19,7 @@
         <module>deadlocks</module>
         <module>isolation-levels</module>
         <module>toctou</module>
+        <module>optimistic-locking</module>
     </modules>
 
     <properties>

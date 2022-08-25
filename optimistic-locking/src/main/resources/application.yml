@@ -1,0 +1,7 @@
+spring:
+  jpa:
+    show-sql: true
+    hibernate:
+      ddl-auto: create-drop
+  datasource:
+    url: jdbc:h2:mem:optimistic_locking_demo;DB_CLOSE_DELAY=-1
