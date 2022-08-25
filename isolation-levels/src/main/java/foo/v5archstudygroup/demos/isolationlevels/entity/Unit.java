@@ -10,6 +10,7 @@ import java.util.Optional;
 import static java.util.Objects.requireNonNull;
 
 @Entity
+@Table(indexes = @Index(columnList = "call_sign", unique = true))
 public class Unit extends AbstractPersistable<Long> {
 
     private static final int CALL_SIGN_MAX_LENGTH = 100;

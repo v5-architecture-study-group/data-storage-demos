@@ -64,15 +64,18 @@ public abstract class BaseTest {
     }
 
     protected void allowReading() {
+        log.debug("Allowing reading");
         readSemaphore.release();
     }
 
     protected void allowWriting() {
+        log.debug("Allowing writing");
         writeSemaphore.release();
     }
 
     protected void awaitReadPermission() {
         try {
+            log.debug("Awaiting read permission");
             if (!readSemaphore.tryAcquire(1, TimeUnit.SECONDS)) {
                 Assertions.fail("Could not acquire read permission");
             }
@@ -83,6 +86,7 @@ public abstract class BaseTest {
 
     protected void awaitWritePermission() {
         try {
+            log.debug("Awaiting write permission");
             if (!writeSemaphore.tryAcquire(1, TimeUnit.SECONDS)) {
                 Assertions.fail("Could not acquire write permission");
             }

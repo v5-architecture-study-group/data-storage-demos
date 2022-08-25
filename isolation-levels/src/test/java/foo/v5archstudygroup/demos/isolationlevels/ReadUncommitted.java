@@ -14,7 +14,10 @@ import java.util.concurrent.CompletableFuture;
 
 import static org.assertj.core.api.Assertions.assertThat;
 
-@SpringBootTest(webEnvironment = SpringBootTest.WebEnvironment.NONE)
+@SpringBootTest(
+        webEnvironment = SpringBootTest.WebEnvironment.NONE,
+        properties = "spring.datasource.url=jdbc:h2:mem:isolation_level_demo_ru;DB_CLOSE_DELAY=-1" // H2
+)
 public class ReadUncommitted extends BaseTest {
 
     @Autowired
