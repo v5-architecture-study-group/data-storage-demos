@@ -20,6 +20,7 @@
         <module>isolation-levels</module>
         <module>toctou</module>
         <module>optimistic-locking</module>
+        <module>idempotence</module>
     </modules>
 
     <properties>
