@@ -21,6 +21,7 @@
         <module>toctou</module>
         <module>optimistic-locking</module>
         <module>idempotence</module>
+        <module>distributed-log</module>
     </modules>
 
     <properties>
