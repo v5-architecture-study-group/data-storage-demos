@@ -23,6 +23,7 @@
         <module>idempotence</module>
         <module>distributed-log</module>
         <module>orchestrated-saga</module>
+        <module>choreographed-saga</module>
     </modules>
 
     <properties>
