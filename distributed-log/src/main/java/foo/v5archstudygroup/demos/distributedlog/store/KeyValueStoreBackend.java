@@ -2,6 +2,9 @@ package foo.v5archstudygroup.demos.distributedlog.store;
 
 import java.util.Optional;
 
+/**
+ * Need to take care of thread safety!
+ */
 public interface KeyValueStoreBackend extends AutoCloseable {
 
     void write(byte[] key, byte[] value);

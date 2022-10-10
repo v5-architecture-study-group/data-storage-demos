@@ -25,13 +25,13 @@ public class FileKeyValueStoreBackend implements KeyValueStoreBackend {
     }
 
     @Override
-    public void close() throws Exception {
+    public synchronized void close() throws Exception {
         index.close();
         data.close();
     }
 
     @Override
-    public void write(byte[] key, byte[] value) {
+    public synchronized void write(byte[] key, byte[] value) {
         try {
             var dataAddress = index.get(key);
             if (dataAddress.isPresent()) {
@@ -47,7 +47,7 @@ public class FileKeyValueStoreBackend implements KeyValueStoreBackend {
     }
 
     @Override
-    public boolean hasKey(byte[] key) {
+    public synchronized boolean hasKey(byte[] key) {
         try {
             return index.contains(key);
         } catch (IOException ex) {
@@ -56,7 +56,7 @@ public class FileKeyValueStoreBackend implements KeyValueStoreBackend {
     }
 
     @Override
-    public Optional<byte[]> read(byte[] key) {
+    public synchronized Optional<byte[]> read(byte[] key) {
         try {
             var dataAddress = index.get(key);
             if (dataAddress.isPresent()) {
@@ -69,7 +69,7 @@ public class FileKeyValueStoreBackend implements KeyValueStoreBackend {
     }
 
     @Override
-    public void remove(byte[] key) {
+    public synchronized void remove(byte[] key) {
         try {
             var dataAddress = index.remove(key);
             if (dataAddress.isPresent()) {
@@ -81,22 +81,22 @@ public class FileKeyValueStoreBackend implements KeyValueStoreBackend {
     }
 
     @Override
-    public long readLastSeenWalEntry() {
+    public synchronized long readLastSeenWalEntry() {
         return 0;
     }
 
     @Override
-    public void writeLastSeenWalEntryId(long entryId) {
+    public synchronized void writeLastSeenWalEntryId(long entryId) {
 
     }
 
     @Override
-    public long size() {
+    public synchronized long size() {
         return index.size();
     }
 
     @Override
-    public long capacity() {
+    public synchronized long capacity() {
         return index.capacity();
     }
 
@@ -132,15 +132,15 @@ public class FileKeyValueStoreBackend implements KeyValueStoreBackend {
             }
         }
 
-        public boolean contains(byte[] key) throws IOException {
+        public synchronized boolean contains(byte[] key) throws IOException {
             return get(key).isPresent();
         }
 
-        public Optional<DataAddress> remove(byte[] key) throws IOException {
+        public synchronized Optional<DataAddress> remove(byte[] key) throws IOException {
             return put(key, null);
         }
 
-        public Optional<DataAddress> put(byte[] key, DataAddress address) throws IOException {
+        public synchronized Optional<DataAddress> put(byte[] key, DataAddress address) throws IOException {
             var bucketAddress = getBucketAddress(key);
             var bucket = new Bucket(bucketAddress);
             if (address == null) {
@@ -166,22 +166,22 @@ public class FileKeyValueStoreBackend implements KeyValueStoreBackend {
             }
         }
 
-        public Optional<DataAddress> get(byte[] key) throws IOException {
+        public synchronized Optional<DataAddress> get(byte[] key) throws IOException {
             var bucketAddress = getBucketAddress(key);
             var bucket = new Bucket(bucketAddress);
             return bucket.findByKey(key).map(Node::dataAddress);
         }
 
-        public long capacity() {
+        public synchronized long capacity() {
             return capacity;
         }
 
-        public long size() {
+        public synchronized long size() {
             return size;
         }
 
         @Override
-        public void close() throws Exception {
+        public synchronized void close() throws Exception {
             file.close();
         }
 
@@ -411,18 +411,18 @@ public class FileKeyValueStoreBackend implements KeyValueStoreBackend {
         }
 
         @Override
-        public void close() throws Exception {
+        public synchronized void close() throws Exception {
             file.close();
         }
 
-        public void write(DataAddress address, byte[] data) throws IOException {
+        public synchronized void write(DataAddress address, byte[] data) throws IOException {
             requireNonNull(address);
             requireNonNull(data);
             var page = getPage(address.pageIndex());
             page.write(address.blockIndex(), data);
         }
 
-        public DataAddress allocate(int bytes) throws IOException {
+        public synchronized DataAddress allocate(int bytes) throws IOException {
             for (var i = 0; i < pages; ++i) {
                 var page = getPage(i);
                 var address = page.tryAllocate(bytes);
@@ -435,13 +435,13 @@ public class FileKeyValueStoreBackend implements KeyValueStoreBackend {
             return newPage.tryAllocate(bytes).orElseThrow(() -> new IOException("Could not allocate space in new block"));
         }
 
-        public void free(DataAddress address) throws IOException {
+        public synchronized void free(DataAddress address) throws IOException {
             requireNonNull(address);
             var page = getPage(address.pageIndex());
             page.free(address.blockIndex());
         }
 
-        public Optional<byte[]> read(DataAddress address) throws IOException {
+        public synchronized Optional<byte[]> read(DataAddress address) throws IOException {
             requireNonNull(address);
             var page = getPage(address.pageIndex());
             return page.read(address.blockIndex());
@@ -456,11 +456,11 @@ public class FileKeyValueStoreBackend implements KeyValueStoreBackend {
             return page;
         }
 
-        public int pageCount() {
+        public synchronized int pageCount() {
             return pages;
         }
 
-        public int freeBlocksInPage(int pageIndex) throws IOException {
+        public synchronized int freeBlocksInPage(int pageIndex) throws IOException {
             return getPage(pageIndex).freeBlocks;
         }
 

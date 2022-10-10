@@ -1,0 +1,50 @@
+syntax = "proto3";
+
+package foo.v5archstudygroup.demos.orchestratedsaga.api;
+
+option java_multiple_files = true;
+
+message AddBambooHREmployeeCommand {
+  string firstName = 1;
+  string lastName = 2;
+  string emailAddress = 3;
+  string department = 4;
+}
+
+message AddBambooHREmployeeResponse {
+  int32 status = 1;
+  string description = 2;
+}
+
+service BambooHR {
+  rpc addEmployee(AddBambooHREmployeeCommand) returns (AddBambooHREmployeeResponse);
+}
+
+message AddWorkHoursEmployeeCommand {
+  string firstName = 1;
+  string lastName = 2;
+}
+
+message AddWorkHoursEmployeeResponse {
+  int32 status = 1;
+  string description = 2;
+  int64 employeeId = 3;
+}
+
+service WorkHours {
+  rpc addEmployee(AddWorkHoursEmployeeCommand) returns (AddWorkHoursEmployeeResponse);
+}
+
+message AddGoogleAppsUserCommand {
+  string emailAddress = 1;
+  string fullName = 2;
+}
+
+message AddGoogleAppsUserResponse {
+  int32 status = 1;
+  string description = 2;
+}
+
+service GoogleApps {
+  rpc addUser(AddGoogleAppsUserCommand) returns (AddGoogleAppsUserResponse);
+}
